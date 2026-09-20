@@ -1,9 +1,18 @@
 <script setup>
-import { computed, ref } from 'vue';
-import { Link, router, usePage } from '@inertiajs/vue3';
+import { computed, ref, onMounted } from 'vue';
+import { router, usePage } from '@inertiajs/vue3';
 
-const page   = usePage();
-const user   = computed(() => page.props.auth.user);
+const props = defineProps({
+  activeTab: {
+    type: String,
+    default: 'dashboard',
+  },
+});
+
+const emit = defineEmits(['tabChange']);
+
+const page = usePage();
+const user = computed(() => page.props.auth.user);
 const sidebarOpen = ref(false);
 
 const initials = computed(() => {
@@ -20,31 +29,59 @@ const roleClass = computed(() => {
   return { admin: '', team_member: 'team', client: 'client' }[user.value?.role] ?? '';
 });
 
-// Role-specific nav items
+// Role-specific nav items with direct interactive IDs
 const navItems = computed(() => {
   const role = user.value?.role;
   if (role === 'admin') return [
-    { href: '/dashboard',  label: 'Dashboard',        icon: '⊞' },
-    { href: '/admin-only', label: 'Admin Control',    icon: '🔐' },
-    { href: '#users',      label: 'User Management',  icon: '👥' },
-    { href: '#projects',   label: 'Projects',         icon: '📁' },
-    { href: '#reports',    label: 'Reports',          icon: '📊' },
-    { href: '#settings',   label: 'Settings',         icon: '⚙️' },
+    { id: 'dashboard',   label: 'Command Center',    icon: '⊞' },
+    { href: '/admin-only', label: 'Admin Security',  icon: '🔐' },
+    { id: 'users',       label: 'User Management',   icon: '👥' },
+    { id: 'permissions', label: 'Permission Matrix', icon: '⚡' },
+    { id: 'projects',    label: 'Agency Projects',   icon: '📁' },
+    { id: 'reports',     label: 'Financial Reports', icon: '📊' },
+    { id: 'settings',    label: 'System Settings',   icon: '⚙️' },
   ];
   if (role === 'team_member') return [
-    { href: '/dashboard', label: 'Dashboard',  icon: '⊞' },
-    { href: '/team-only', label: 'Team Hub',   icon: '🔒' },
-    { href: '#tasks',     label: 'My Tasks',   icon: '✅' },
-    { href: '#projects',  label: 'Projects',   icon: '📁' },
-    { href: '#calendar',  label: 'Calendar',   icon: '📅' },
+    { id: 'dashboard', label: 'Agile Workspace',   icon: '⊞' },
+    { href: '/team-only', label: 'Team Hub',       icon: '🔒' },
+    { id: 'tasks',     label: 'My Tasks & Board',  icon: '✅' },
+    { id: 'projects',  label: 'Active Projects',   icon: '📁' },
+    { id: 'calendar',  label: 'Sprint Calendar',   icon: '📅' },
   ];
   return [
-    { href: '/dashboard', label: 'Dashboard',        icon: '⊞' },
-    { href: '#projects',  label: 'My Projects',      icon: '📁' },
-    { href: '#requests',  label: 'Service Requests', icon: '📩' },
-    { href: '#invoices',  label: 'Invoices',         icon: '🧾' },
-    { href: '#support',   label: 'Support',          icon: '💬' },
+    { id: 'dashboard', label: 'Dashboard',         icon: '⊞' },
+    { id: 'projects',  label: 'My Projects',       icon: '📁' },
+    { id: 'requests',  label: 'Service Requests',  icon: '📩' },
+    { id: 'invoices',  label: 'Invoices',          icon: '🧾' },
+    { id: 'support',   label: 'Support',           icon: '💬' },
   ];
+});
+
+const isItemActive = (item) => {
+  if (item.href) {
+    return page.url === item.href;
+  }
+  return props.activeTab === item.id;
+};
+
+const handleNavClick = (item) => {
+  if (item.href) {
+    router.visit(item.href);
+  } else if (item.id) {
+    emit('tabChange', item.id);
+    window.location.hash = item.id;
+  }
+  closeSidebar();
+};
+
+onMounted(() => {
+  const hash = window.location.hash.replace('#', '');
+  if (hash) {
+    const valid = navItems.value.some(i => i.id === hash);
+    if (valid) {
+      emit('tabChange', hash);
+    }
+  }
 });
 
 const logout = () => router.post('/logout');
@@ -86,16 +123,16 @@ const closeSidebar  = () => { sidebarOpen.value = false; };
       <!-- Nav -->
       <nav class="sidebar-nav">
         <div class="nav-section-label">Navigation</div>
-        <Link
+        <button
           v-for="item in navItems"
-          :key="item.href"
-          :href="item.href"
-          :class="['nav-link', { active: item.href === '/dashboard' && page.url === '/dashboard' }]"
-          @click="closeSidebar"
+          :key="item.id || item.href"
+          type="button"
+          :class="['nav-link', { active: isItemActive(item) }]"
+          @click="handleNavClick(item)"
         >
           <span class="nav-icon">{{ item.icon }}</span>
-          {{ item.label }}
-        </Link>
+          <span>{{ item.label }}</span>
+        </button>
       </nav>
 
       <!-- Footer -->
