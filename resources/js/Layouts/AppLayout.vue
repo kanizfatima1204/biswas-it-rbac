@@ -95,7 +95,7 @@ const closeSidebar  = () => { sidebarOpen.value = false; };
 
   <div class="shell">
     <!-- ── Sidebar ── -->
-    <aside :class="['sidebar', { open: sidebarOpen }]">
+    <aside :class="['sidebar', roleClass, { open: sidebarOpen }]">
       <!-- Brand -->
       <div class="sidebar-top">
         <div class="brand">
@@ -128,6 +128,7 @@ const closeSidebar  = () => { sidebarOpen.value = false; };
           :key="item.id || item.href"
           type="button"
           :class="['nav-link', { active: isItemActive(item) }]"
+          style="background: transparent; border: none;"
           @click="handleNavClick(item)"
         >
           <span class="nav-icon">{{ item.icon }}</span>

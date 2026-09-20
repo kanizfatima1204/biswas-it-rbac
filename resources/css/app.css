@@ -75,7 +75,14 @@ body {
 }
 a { color: inherit; text-decoration: none; }
 img { display: block; max-width: 100%; }
-button { font-family: var(--font); cursor: pointer; border: none; outline: none; }
+button {
+  font-family: var(--font);
+  cursor: pointer;
+  border: none;
+  outline: none;
+  background: transparent;
+  color: inherit;
+}
 input, select, textarea { font-family: var(--font); }
 
 /* ── Scrollbar ────────────────────────────────────────────── */
@@ -236,30 +243,51 @@ input, select, textarea { font-family: var(--font); }
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 10px 12px;
+  padding: 10px 14px;
   border-radius: var(--radius-sm);
   color: var(--text-2);
   font-size: 13px;
   font-weight: 500;
   transition: all 0.2s ease;
   position: relative;
+  background: transparent !important;
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
 }
 .nav-link:hover {
-  background: var(--bg-card-h);
-  color: var(--text);
+  background: var(--bg-card-h) !important;
+  color: var(--text) !important;
 }
 .nav-link.active {
-  background: rgba(124,58,237,0.15);
-  color: var(--admin-2);
+  background: rgba(124,58,237,0.18) !important;
+  color: var(--admin-2) !important;
   font-weight: 600;
+}
+.sidebar.team .nav-link.active {
+  background: rgba(8,145,178,0.2) !important;
+  color: var(--team-2) !important;
+}
+.sidebar.client .nav-link.active {
+  background: rgba(217,119,6,0.2) !important;
+  color: var(--client-2) !important;
 }
 .nav-link.active::before {
   content: '';
   position: absolute;
-  left: 0; top: 20%; bottom: 20%;
+  left: 0; top: 15%; bottom: 15%;
   width: 3px;
   border-radius: 0 3px 3px 0;
-  background: var(--accent-grad);
+  background: var(--admin-grad);
+}
+.sidebar.team .nav-link.active::before {
+  background: var(--team-grad);
+}
+.sidebar.client .nav-link.active::before {
+  background: var(--client-grad);
 }
 .nav-icon {
   width: 18px; height: 18px;
