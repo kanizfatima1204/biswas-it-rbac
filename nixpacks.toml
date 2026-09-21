@@ -13,4 +13,4 @@ cmds = [
 ]
 
 [start]
-cmd = "bash startup.sh"
+cmd = "sh startup.sh"
