@@ -8,11 +8,8 @@ nixPkgs = ["php82", "php82Packages.composer", "nodejs_20", "php82Extensions.pdo"
 cmds = [
     "composer install --no-dev --optimize-autoloader",
     "npm install",
-    "npm run build",
-    "php artisan config:clear",
-    "php artisan route:clear",
-    "php artisan view:clear"
+    "npm run build"
 ]
 
 [start]
-cmd = "sh -c 'mkdir -p database storage/framework/sessions storage/framework/views storage/framework/cache/data storage/logs && touch database/database.sqlite && php artisan key:generate --force && php artisan migrate --force --seed && php artisan config:cache && php artisan route:cache && php artisan view:cache && php artisan storage:link --force && php artisan serve --host=0.0.0.0 --port=$PORT'"
+cmd = "sh -c 'mkdir -p database storage/framework/sessions storage/framework/views storage/framework/cache/data storage/logs && touch database/database.sqlite && cp -n .env.example .env && php artisan key:generate --force && [ -n \"$RAILWAY_PUBLIC_DOMAIN\" ] && sed -i \"s|APP_URL=.*|APP_URL=https://$RAILWAY_PUBLIC_DOMAIN|\" .env; php artisan migrate --force --seed && php artisan config:cache && php artisan route:cache && php artisan view:cache && php artisan storage:link --force && php artisan serve --host=0.0.0.0 --port=$PORT'"
