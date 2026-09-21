@@ -2,7 +2,7 @@
 NIXPACKS_PHP_ROOT_DIR = "/app/public"
 
 [phases.setup]
-nixPkgs = ["php82", "php82Packages.composer", "nodejs_20", "php82Extensions.pdo", "php82Extensions.pdo_sqlite", "php82Extensions.mbstring", "php82Extensions.tokenizer", "php82Extensions.xml", "php82Extensions.ctype", "php82Extensions.fileinfo", "php82Extensions.openssl"]
+nixPkgs = ["php82", "php82Packages.composer", "nodejs_20", "php82Extensions.pdo", "php82Extensions.pdo_mysql", "php82Extensions.mbstring", "php82Extensions.tokenizer", "php82Extensions.xml", "php82Extensions.ctype", "php82Extensions.fileinfo", "php82Extensions.openssl"]
 
 [phases.build]
 cmds = [
@@ -12,4 +12,4 @@ cmds = [
 ]
 
 [start]
-cmd = "sh -c 'mkdir -p database storage/framework/sessions storage/framework/views storage/framework/cache/data storage/logs && touch database/database.sqlite && cp -n .env.example .env && php artisan key:generate --force && [ -n \"$RAILWAY_PUBLIC_DOMAIN\" ] && sed -i \"s|APP_URL=.*|APP_URL=https://$RAILWAY_PUBLIC_DOMAIN|\" .env; php artisan migrate --force --seed && php artisan config:cache && php artisan route:cache && php artisan view:cache && php artisan storage:link --force && php artisan serve --host=0.0.0.0 --port=$PORT'"
+cmd = "sh startup.sh"
