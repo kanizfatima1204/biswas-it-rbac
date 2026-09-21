@@ -1,8 +1,9 @@
 [variables]
 NIXPACKS_PHP_ROOT_DIR = "/app/public"
+NIXPACKS_PHP_EXTENSIONS = "pdo_mysql,mbstring,tokenizer,xml,ctype,fileinfo,openssl,bcmath"
 
 [phases.setup]
-nixPkgs = ["php82", "php82Packages.composer", "nodejs_20", "php82Extensions.pdo", "php82Extensions.pdo_mysql", "php82Extensions.mbstring", "php82Extensions.tokenizer", "php82Extensions.xml", "php82Extensions.ctype", "php82Extensions.fileinfo", "php82Extensions.openssl"]
+nixPkgs = ["php82", "php82Packages.composer", "nodejs_20"]
 
 [phases.build]
 cmds = [
@@ -12,4 +13,4 @@ cmds = [
 ]
 
 [start]
-cmd = "sh startup.sh"
+cmd = "bash startup.sh"
