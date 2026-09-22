@@ -11,14 +11,19 @@ touch database/database.sqlite
 # absent. Laravel's key generator requires an APP_KEY entry to already exist.
 [ -f .env ] || cp .env.example .env
 
-# Railway's MySQL template provides MYSQL* variables. Map them when the service
-# has not been configured with Laravel's DB_* variable names directly.
-export DB_CONNECTION="${DB_CONNECTION:-mysql}"
-export DB_HOST="${DB_HOST:-${MYSQLHOST:-${MYSQL_HOST:-127.0.0.1}}}"
-export DB_PORT="${DB_PORT:-${MYSQLPORT:-${MYSQL_PORT:-3306}}}"
-export DB_DATABASE="${DB_DATABASE:-${MYSQLDATABASE:-${MYSQL_DATABASE:-railway}}}"
-export DB_USERNAME="${DB_USERNAME:-${MYSQLUSER:-${MYSQL_USER:-root}}}"
-export DB_PASSWORD="${DB_PASSWORD:-${MYSQLPASSWORD:-${MYSQL_PASSWORD:-}}}"
+# Use an attached Railway MySQL service when it is available. A standalone web
+# service has no MySQL server, so SQLite is the reliable default for this app.
+if [ -n "${MYSQLHOST:-}${MYSQL_HOST:-}" ]; then
+    export DB_CONNECTION="${DB_CONNECTION:-mysql}"
+    export DB_HOST="${DB_HOST:-${MYSQLHOST:-${MYSQL_HOST:-}}}"
+    export DB_PORT="${DB_PORT:-${MYSQLPORT:-${MYSQL_PORT:-3306}}}"
+    export DB_DATABASE="${DB_DATABASE:-${MYSQLDATABASE:-${MYSQL_DATABASE:-railway}}}"
+    export DB_USERNAME="${DB_USERNAME:-${MYSQLUSER:-${MYSQL_USER:-root}}}"
+    export DB_PASSWORD="${DB_PASSWORD:-${MYSQLPASSWORD:-${MYSQL_PASSWORD:-}}}"
+elif [ -z "${DB_CONNECTION:-}" ]; then
+    export DB_CONNECTION=sqlite
+    export DB_DATABASE=database/database.sqlite
+fi
 
 echo "✅ Directories ready"
 
