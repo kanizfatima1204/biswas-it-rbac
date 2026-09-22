@@ -6,6 +6,7 @@
 .phpunit.result.cache
 /storage/*.key
 /storage/logs/*.log
+/bootstrap/cache/*.php
 database/database.sqlite
 public/hot
 !.gitkeep
